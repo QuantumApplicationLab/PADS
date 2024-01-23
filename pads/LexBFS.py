@@ -9,9 +9,9 @@ http://www.cs.colostate.edu/~rmm/lexbfs.ps
 D. Eppstein, November 2003.
 """
 
-from pads.PartitionRefinement import PartitionRefinement
-from pads.Sequence import Sequence
-from pads.Util import arbitrary_item
+from .PartitionRefinement import PartitionRefinement
+from .Sequence import Sequence
+from .Util import arbitrary_item
 
 def LexBFS(G):
     """Find lexicographic breadth-first-search traversal order of a graph.
