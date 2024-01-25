@@ -7,6 +7,7 @@ import unittest
 from .UnionFind import UnionFind
 from .Graphs import isUndirected
 
+
 def MinimumSpanningTree(G):
     """
     Return the minimum spanning tree of an undirected graph G.
@@ -28,23 +29,25 @@ def MinimumSpanningTree(G):
     # part (the sort) is sped up by being built in to Python.
     subtrees = UnionFind()
     tree = []
-    for W,u,v in sorted((G[u][v],u,v) for u in G for v in G[u]):
+    for W, u, v in sorted((G[u][v], u, v) for u in G for v in G[u]):
         if subtrees[u] != subtrees[v]:
-            tree.append((u,v))
-            subtrees.union(u,v)
-    return tree        
+            tree.append((u, v))
+            subtrees.union(u, v)
+    return tree
 
 
 # If run standalone, perform unit tests
 
+
 class MSTTest(unittest.TestCase):
     def testMST(self):
         """Check that MinimumSpanningTree returns the correct answer."""
-        G = {0:{1:11,2:13,3:12},1:{0:11,3:14},2:{0:13,3:10},3:{0:12,1:14,2:10}}
-        T = [(2,3),(0,1),(0,3)]
-        for e,f in zip(MinimumSpanningTree(G),T):
-            self.assertEqual(min(e),min(f))
-            self.assertEqual(max(e),max(f))
+        G = {0: {1: 11, 2: 13, 3: 12}, 1: {0: 11, 3: 14}, 2: {0: 13, 3: 10}, 3: {0: 12, 1: 14, 2: 10}}
+        T = [(2, 3), (0, 1), (0, 3)]
+        for e, f in zip(MinimumSpanningTree(G), T):
+            self.assertEqual(min(e), min(f))
+            self.assertEqual(max(e), max(f))
+
 
 if __name__ == "__main__":
-    unittest.main()   
+    unittest.main()
