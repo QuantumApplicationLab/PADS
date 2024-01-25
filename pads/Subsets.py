@@ -9,6 +9,7 @@ it should be copied to another structure.
 
 D. Eppstein, September 2017."""
 
+
 def subsets(S):
     """All subsets of sequence S."""
     S = iter(S)

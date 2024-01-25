@@ -30,12 +30,14 @@ We also provide related structures that store only the values (not the keys):
 D. Eppstein, January 2010, significantly updated September 2019
 """
 
+
 class IntegerPriorityQueue:
     """Like a dictionary with a min() method"""
+
     def __init__(self, i):
-        self._D = dict()            # keys -> values
-        self._L = dict()            # values -> sets of keys
-        self._Q = IntegerHeap(i)    # queue of values w/nonempty lists
+        self._D = dict()  # keys -> values
+        self._L = dict()  # values -> sets of keys
+        self._Q = IntegerHeap(i)  # queue of values w/nonempty lists
 
     def __getitem__(self, key):
         return self._D[key]
@@ -77,7 +79,7 @@ class IntegerPriorityQueue:
 def IntegerHeap(i):
     """Return an integer heap for 2^i-bit integers.
     We use a BitVectorHeap for small i and a FlatHeap for large i.
-    
+
     Timing tests indicate that the cutoff i <= 3 is slightly
     faster than the also-plausible cutoff i <= 2, and that both
     are much faster than the way-too-large cutoff i <= 4.
@@ -87,62 +89,71 @@ def IntegerHeap(i):
         return BitVectorHeap()
     return FlatHeap(i)
 
-Log2Table = {}          # Table of powers of two, with their logs
+
+Log2Table = {}  # Table of powers of two, with their logs
+
+
 def Log2(b):
     """Return log_2(b), where b must be a power of two."""
     while b not in Log2Table:
         i = len(Log2Table)
-        Log2Table[1<<i] = i
+        Log2Table[1 << i] = i
     return Log2Table[b]
+
 
 # ======================================================================
 #   BitVectorHeap
 # ======================================================================
 
+
 class BitVectorHeap:
     """Maintain the minimum of a set of integers using bitvector operations."""
+
     def __init__(self):
         """Create a new BitVectorHeap."""
         self._S = 0
-        
+
     def __nonzero__(self):
         """True if this heap is nonempty, false if empty."""
         return self._S != 0
-        
+
     def __bool__(self):
         """True if this heap is nonempty, false if empty."""
         return self._S != 0
 
-    def add(self,x):
+    def add(self, x):
         """Include x among the values in the heap."""
-        self._S |= 1<<x
+        self._S |= 1 << x
 
-    def remove(self,x):
+    def remove(self, x):
         """Remove x from the values in the heap."""
-        self._S &=~ 1<<x
+        self._S &= ~1 << x
 
     def min(self):
         """Return the minimum value in the heap."""
         if not self._S:
             raise ValueError("BitVectorHeap is empty")
-        return Log2(self._S &~ (self._S - 1))
+        return Log2(self._S & ~(self._S - 1))
+
 
 # ======================================================================
 #   FlatHeap
 # ======================================================================
 
+
 class FlatHeap:
     """Maintain the minimum of a set of 2^i-bit integer values."""
-    def __init__(self,i):
+
+    def __init__(self, i):
         """Create a new FlatHeap for 2^i-bit integers."""
         self._min = None
         self._order = i
-        self._shift = (1 << (i - 1))
+        self._shift = 1 << (i - 1)
         self._max = (1 << (1 << i)) - 1
-        self._HQ = IntegerHeap(i-1) # Heap of high halfwords
-        self._LQ = {}               # Map high half to heaps of low halfwords
+        self._HQ = IntegerHeap(i - 1)  # Heap of high halfwords
+        self._LQ = {}  # Map high half to heaps of low halfwords
 
-    def _rangecheck(self,x):
+    def _rangecheck(self, x):
         """Make sure x is a number we can include in this FlatHeap."""
         if x < 0 or x > self._max:
             raise ValueError("FlatHeap: %s out of range" % repr(x))
@@ -161,7 +172,7 @@ class FlatHeap:
             raise ValueError("FlatHeap is empty")
         return self._min
 
-    def add(self,x):
+    def add(self, x):
         """Include x among the values in the heap."""
         self._rangecheck(x)
         if self._min is None or self._min == x:
@@ -171,14 +182,14 @@ class FlatHeap:
         if x < self._min:
             # swap to make sure the value we're adding is non-minimal
             x, self._min = self._min, x
-        H = x >> self._shift            # split into high and low halfwords
+        H = x >> self._shift  # split into high and low halfwords
         L = x - (H << self._shift)
         if H not in self._LQ:
             self._HQ.add(H)
-            self._LQ[H] = IntegerHeap(self._order-1)
+            self._LQ[H] = IntegerHeap(self._order - 1)
         self._LQ[H].add(L)
 
-    def remove(self,x):
+    def remove(self, x):
         """Remove x from the values in the heap."""
         self._rangecheck(x)
         if self._min == x:
@@ -191,14 +202,15 @@ class FlatHeap:
             L = self._LQ[H].min()
             x = self._min = (H << self._shift) + L
         else:
-            H = x >> self._shift            # split into high and low halfwords
+            H = x >> self._shift  # split into high and low halfwords
             L = x - (H << self._shift)
         if H not in self._LQ:
-            return                          # ignore removal when not in heap
+            return  # ignore removal when not in heap
         self._LQ[H].remove(L)
         if not self._LQ[H]:
             del self._LQ[H]
             self._HQ.remove(H)
+
 
 # ======================================================================
 #   LinearHeap
@@ -207,23 +219,24 @@ class FlatHeap:
 
 class LinearHeap:
     """Maintain the minimum of a set of integers using a set object."""
+
     def __init__(self):
         """Create a new BitVectorHeap."""
         self._S = set()
-        
+
     def __nonzero__(self):
         """True if this heap is nonempty, false if empty."""
         return len(self._S) > 0
-        
+
     def __bool__(self):
         """True if this heap is nonempty, false if empty."""
         return len(self._S) > 0
 
-    def add(self,x):
+    def add(self, x):
         """Include x among the values in the heap."""
         self._S.add(x)
 
-    def remove(self,x):
+    def remove(self, x):
         """Remove x from the values in the heap."""
         self._S.remove(x)
 
@@ -237,24 +250,25 @@ class LinearHeap:
 # ======================================================================
 
 if __name__ == "__main__":
-    import unittest,random
+    import unittest, random
+
     random.seed(1234)
 
     class IntegerHeapTest(unittest.TestCase):
         def testHeaps(self):
-            o = 5               # do tests on 2^5-bit integers
+            o = 5  # do tests on 2^5-bit integers
             N = LinearHeap()
             I = IntegerHeap(o)
             for iteration in range(20000):
-                self.assertEqual(bool(N),bool(I))   # both have same emptiness
+                self.assertEqual(bool(N), bool(I))  # both have same emptiness
                 if (not N) or random.randrange(2):  # flip coin for add/remove
-                    x = random.randrange(1<<(1<<o))
+                    x = random.randrange(1 << (1 << o))
                     N.add(x)
                     I.add(x)
                 else:
                     x = N.min()
-                    self.assertEqual(x,I.min())
+                    self.assertEqual(x, I.min())
                     N.remove(x)
                     I.remove(x)
 
-    unittest.main()   
+    unittest.main()

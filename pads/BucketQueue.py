@@ -17,37 +17,38 @@ the maximum priority.
 D. Eppstein, July 2016.
 """
 
+
 class BucketQueue:
     def __init__(self):
         """Create a new empty integer priority queue."""
-        self._D = {}        # map from items to priorities
-        self._Q = {}        # map from priorities to buckets
-        self._N = None      # lower bound on min priority
+        self._D = {}  # map from items to priorities
+        self._Q = {}  # map from priorities to buckets
+        self._N = None  # lower bound on min priority
 
-    def __getitem__(self,item):
+    def __getitem__(self, item):
         """Look up the priority of an item."""
         return self._D[item]
 
-    def __delitem__(self,item):
+    def __delitem__(self, item):
         """Remove an item from the priority queue."""
         priority = self._D[item]
-        del self._D[item]               # remove from map of items => priorities
+        del self._D[item]  # remove from map of items => priorities
         self._Q[priority].remove(item)  # remove from bucket
         if not self._Q[priority]:
-            del self._Q[priority]       # remove empty bucket
+            del self._Q[priority]  # remove empty bucket
 
-    def __setitem__(self,item,priority):
+    def __setitem__(self, item, priority):
         """Add an element to the priority queue with the given priority."""
-        if not isinstance(priority,int):
+        if not isinstance(priority, int):
             raise TypeError("Priority must be an integer")
         if item in self._D:
             del self[item]
-        self._D[item] = priority        # add to map of items => priorities
+        self._D[item] = priority  # add to map of items => priorities
         if not self._Q or priority < self._N:
-            self._N = priority          # update priority lower bound
+            self._N = priority  # update priority lower bound
         if priority not in self._Q:
-            self._Q[priority] = set()   # make new bucket if necessary
-        self._Q[priority].add(item)     # and add to bucket
+            self._Q[priority] = set()  # make new bucket if necessary
+        self._Q[priority].add(item)  # and add to bucket
 
     def __iter__(self):
         """Repeatedly find and remove the min-priority item from the queue.
@@ -55,7 +56,7 @@ class BucketQueue:
         while self._Q:
             while self._N not in self._Q:
                 self._N += 1
-            x = next(iter(self._Q[self._N]))    # arbitrary item in 1st bucket
+            x = next(iter(self._Q[self._N]))  # arbitrary item in 1st bucket
             del self[x]
             yield x
 
@@ -64,9 +65,9 @@ class BucketQueue:
         We rely on the fact that the usual __iter__ always
         leaves self._N equal to the priority."""
         for x in iter(self):
-            yield x,self._N
+            yield x, self._N
 
-    def __contains__(self,item):
+    def __contains__(self, item):
         """Container class membership test."""
         return item in self._D
 
