@@ -1,8 +1,11 @@
 import unittest
-from pads.Chordal import Chordal, PerfectEliminationOrdering
+from pads.Chordal import Chordal
+from pads.Chordal import PerfectEliminationOrdering
 
 
 class ChordalTest(unittest.TestCase):
+    """Test the chordal reduction."""
+
     claw = {0: [1, 2, 3], 1: [0], 2: [0], 3: [0]}
     butterfly = {0: [1, 2, 3, 4], 1: [0, 2], 2: [0, 1], 3: [0, 4], 4: [0, 3]}
     diamond = {0: [1, 2], 1: [0, 2, 3], 2: [0, 1, 3], 3: [1, 2]}

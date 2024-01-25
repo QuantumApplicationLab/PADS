@@ -1,4 +1,4 @@
-"""AcyclicReachability.py
+"""AcyclicReachability.py.
 
 Bit-parallel algorithm for testing which vertices can reach which other vertices in a DAG.
 
@@ -43,7 +43,9 @@ class ReachabilityTest(unittest.TestCase):
         R = Reachability(G)
         for s in "ABCDE":
             for t in "ABCDE":
-                self.assertEqual(R.reachable(s, t), s <= t and s + t not in ["AB", "DE"])
+                self.assertEqual(
+                    R.reachable(s, t), s <= t and s + t not in ["AB", "DE"]
+                )
 
 
 if __name__ == "__main__":
